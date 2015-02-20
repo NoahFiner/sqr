@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>sqr</title>
+        <script type='text/javascript' src="../res/jquery.js"></script>
+        <link type="text/css" rel="stylesheet" href="style.css"/>
+        <link rel="shortcut icon" href="logo.ico">
+            
+    </head>
+    <body style="background-color:black">
+        <div id="background-crap-ignore">
+            </div>
+        <div id="screen">
+            <div id="top-info">
+            <p id="score">Score: 0</p>
+            </div>
+            <div id="playable-area">
+                <div id="vertlines">
+                    </div>
+                <div id="horlines">
+                    </div>
+                <div id="action-place">
+                    </div>
+                </div>
+            <div id="start">
+                <h1><span id="h1s">s</span><span id="h1q">q</span><span id="h1r">r</span></h1>
+                <h6>a game developed by noah finer</h6>
+                <p id="prevscore" class="bigpee">score: 0</p>
+                <p id="topscore" class="bigpee">top: 0</p>
+                <div id="button">
+                <h6>press any key to play</h6>
+                </div>
+                <div id="buttDown">
+                    <p style="margin-top:50px;color:white" class="smallertext">click for options</p>
+                </div>
+                <div id="options">
+                    <h2>options</h2>
+                    <div id="buttUp">
+                        <p class="smallertext">click to go back</p>
+                    </div>
+                    <div class="option" id="firstoption">
+                        <form>
+                            <input type="range" min="2" max="25" value="3" name="numenemies"/>
+                            </form>
+                        <p id="numenemyinfo">amount of enemies: 3<br>multiplier: 3x</p>
+                        </div>
+                    <div class="hr"></div>
+                    <div class="option">
+                        <form>
+                            <input type="range" min="0" max="2" name="difficulty"/>
+                            </form>
+                        <p id="difficultyinfo">difficulty: easy</p>
+                    </div>
+                </div>
+            </div>
+    </body>
+    <script>
+        var update = function() {
+            winHeight = window.innerHeight;
+            winWidth = window.innerWidth;
+            playableWidth = $('#vertlines').width();
+            playableHeight = $('#horlines').height();
+            pixelHeight = playableHeight/10;
+            pixelWidth = playableWidth/10;
+            beginEnemies = $('input[name=numenemies]').val();
+            enemyMultiplier = Math.floor((beginEnemies)/3) + 1
+            $('#numenemyinfo').html("amount of enemies: "+beginEnemies+"<br>multiplier: "+enemyMultiplier+"x");
+            difficulty = parseInt($('input[name=difficulty').val());
+            difficultymultiplier = ((difficulty + 1)/4)*2;
+            switch(difficulty) {
+                case 0:
+                $('#difficultyinfo').html("difficulty: easy<br>multiplier: "+difficultymultiplier+"x");
+                break;
+                case 1:
+                $('#difficultyinfo').html("difficulty: medium<br>multiplier: "+difficultymultiplier+"x");
+                break;
+                case 2:
+                $('#difficultyinfo').html("difficulty: insane<br>multiplier: "+difficultymultiplier+"x");
+                break;
+                default:
+                ayy = "lmao";
+            };
+            }
+    update();
+    var constupdate = setInterval(function () {update()}, 50);
+        var itDown = false;
+        for(i = 0;i < 9;i++) {
+            $('#vertlines').append("<div class='linevert' style='margin-left:"+((playableWidth/10))+"px'></div>");
+        }
+        for(i = 0;i < 9;i++) {
+            $('#horlines').append("<div class='linehor' style='margin-top:"+((playableHeight/10))+"px'></div>");
+        }
+    var gameactive = false;
+    var score = 0;
+    var prevscore = 0;
+    var highscore = 10;
+    $('#playable-area').css("height", (playableHeight+9)+"px")
+    $('#playable-area').css("width", (playableWidth+9)+"px");
+    $('.linevert').css("height", (playableHeight+9)+"px");
+    $('.linehor').css("width", (playableWidth+9)+"px");
+    var killEverything = function() {
+        if(gameactive) {
+            gameactive = false;
+            var constupdate = setInterval(function () {update()}, 100);
+            $('#player').remove();
+            $('#prevscore').html("score: "+score);
+            if(score > highscore) {
+                highscore = score;
+                $('#topscore').css("color", "red");
+            }
+            else {
+                $('#topscore').css("color", "white");
+            }
+            $('#topscore').html("top: "+highscore);
+            $('#start').animate({marginTop:"+=3000px"}, 500);
+        };
+    }
+    var Player = function(x, y, id) {
+        this.x = x;
+        this.y = y;
+        this.coords = [this.x, this.y];
+        this.checkForDEAD = function() {
+            alive = true;
+            for(i = 0; i < e.length; i++) {
+                if(ec[i][0] === this.x) {
+                    if(ec[i][1] === this.y) {
+                        alive = false;
+                        setTimeout(function () {killEverything()}, 50);
+                    }
+                }
+            }
+            return alive;
+        }
+        this.update = function () {
+            this.coords = [this.x, this.y];
+            score += (1*enemyMultiplier*difficultymultiplier);
+            $('#score').html("Score: " + score);
+            this.checkForDEAD();
+        }
+        this.goUp = function(dist) {
+            if(this.coords[1] === 0) {
+                dist = 0;
+            }
+            $(id).animate({marginTop:"-="+((pixelHeight+1)*dist)+"px"}, 100);
+            this.y -= dist;
+            this.update();
+        }
+        this.goDown = function(dist) {
+            if(this.coords[1] === 9) {
+                dist = 0;
+            }
+            $(id).animate({marginTop:"+="+(pixelHeight+1)*dist+"px"}, 100);
+            this.y += dist;
+            this.update();
+        }
+        this.goLeft = function(dist) {
+            if(this.coords[0] === 0) {
+                dist = 0;
+            }
+            $(id).animate({marginLeft:"-="+(pixelWidth+1)*dist+"px"}, 100);
+            this.x -= dist;
+            this.update();
+        }
+        this.goRight = function(dist) {
+            if(this.coords[0] === 9) {
+                dist = 0;
+            }
+            $(id).animate({marginLeft:"+="+(pixelWidth+1)*dist+"px"}, 100);
+            this.x += dist;
+            this.update()
+        }
+    }
+    var Enemy = function(x, y, id, num) {
+        ec.push([x, y]);
+        this.x = x;
+        this.y = y;
+        this.coords = [this.x, this.y];
+        this.diff = [Math.abs(this.x - p.x), Math.abs(this.y - p.y)];
+        this.dist = [this.x - p.x, this.y - p.y];
+        this.update = function () {
+            this.coords = [this.x, this.y];
+            ec[num][0] = this.coords[0];
+            ec[num][1] = this.coords[1];
+            this.diff = [Math.abs(this.x - p.x), Math.abs(this.y - p.y)];
+            this.dist = [this.x - p.x, this.y - p.y];
+        };
+        this.isLegal = function(x, y) {
+            var answer = true;
+            for(i = 0; i < e.length; i++) {
+                if(i != num) {
+                if(ec[i][0] === x) {
+                    if(ec[i][1] === y) {
+                        answer = false;
+                    }
+                    }
+                }
+            }
+            return answer;
+        };
+        this.goUp = function(dist) {
+            //alert('up');
+            if(this.coords[1] === 0 || this.isLegal(this.x, (this.y - dist)) === false) {
+                dist = 0;
+            }
+            $(id).animate({marginTop:"-="+((pixelHeight+1)*dist)+"px"}, 100);
+            this.y -= dist;
+            this.update();
+        }
+        this.goDown = function(dist) {
+            //alert('down');
+            if(this.coords[1] === 9 || this.isLegal(this.x, (this.y + dist)) === false) {
+                dist = 0;
+            }
+            $(id).animate({marginTop:"+="+(pixelHeight+1)*dist+"px"}, 100);
+            this.y += dist;
+            this.update();
+        }
+        this.goLeft = function(dist) {
+            //alert('left');
+            if(this.coords[0] === 0 || this.isLegal((this.x - dist), this.y) === false) {
+                dist = 0;
+                //alert('done');
+            }
+            $(id).animate({marginLeft:"-="+(pixelWidth+1)*dist+"px"}, 100);
+            this.x -= dist;
+            this.update();
+        }
+        this.goRight = function(dist) {
+            //alert('right');
+            if(this.coords[0] === 9 || this.isLegal((this.x + dist), this.y) === false) {
+                dist = 0;
+            }
+            $(id).animate({marginLeft:"+="+(pixelWidth+1)*dist+"px"}, 100);
+            this.x += dist;
+            this.update()
+        }
+        this.getDirection = function() {
+            randomthing = Math.floor(Math.random()*1000) % 2;
+            randomai = Math.random();
+            if(difficulty === 2) {
+                randomthing += 1;
+                if(Math.random() < 0.2) {
+                    randomthing = 1;
+                }
+            }
+            if(difficulty === 1){
+                randomthing = 1;
+                if(Math.random() < 0.01) {
+                    randomthing = 2;
+                }
+                if(Math.random() < 0.02) {
+                    randomthing = 0;
+                }
+            }
+            if(difficulty === 0) {
+                if(Math.random() > 0.2) {
+                    randomthing = 1;
+                }
+            }
+            if(this.diff[0] > this.diff[1]) {
+                if(this.dist[0] > 0) {
+                    this.goLeft(randomthing);
+                }
+                else {
+                    this.goRight(randomthing);
+                }
+            }
+            else if(this.diff[0] < this.diff[1]) {
+                if(this.dist[1] > 0) {
+                    this.goUp(randomthing);
+                }
+                else {
+                    this.goDown(randomthing);
+                }
+            }
+            else if(this.diff[0] === this.diff[1]) {
+                if(this.dist[1] > 0) {
+                    this.goUp(randomthing);
+                }
+                else {
+                    this.goDown(randomthing);
+                }
+            }
+        }
+    }
+    var Game = function(startX, startY) {
+        this.createChar = function(x, y) {
+            $('#action-place').append("<div id='player' style='margin-top:"+(y*pixelHeight + 5)+"px;margin-left:"+(x*pixelWidth + 5)+"px'></div>")
+            $('#player').css("width", pixelWidth+"px");
+            $('#player').css("height", pixelHeight+"px");
+            p = new Player(x, y, "#player");
+        };
+        this.start = function(enemyid, enemyamt) {
+            $('.enemy').remove();
+            e = [];
+            ec = [];
+            this.createChar(startX, startY);
+            this.createEnemy(enemyid, enemyamt);
+        }
+        this.createEnemy = function(id, amt) {
+            for(i = 0; i < amt; i++) {
+                x = Math.floor(Math.random()*9);
+                y = Math.floor(Math.random()*9);
+                $('#action-place').append("<div id="+id+""+i+" class='enemy' style='margin-top:"+(y*pixelHeight + y)+"px;margin-left:"+(x*pixelWidth + x)+"px'></div>")
+                $('#'+id+i).css("width", pixelWidth+"px");
+                $('#'+id+i).css("height", pixelHeight+"px");
+                e[i] = new Enemy(x, y, "#"+id+""+i, i);
+            }
+        }
+    };
+    var g = new Game(5, 5);
+    g.start('enemy', beginEnemies);
+    var restart = function() {
+        if(gameactive === false) {
+            score = 0;
+            g.start('enemy', beginEnemies);
+            $('#start').animate({marginTop:"-=3000px"}, 500);
+            if(itDown) {
+                $('#start').animate({marginTop:"+=1000px"}, 100);
+            }
+            gameactive = true;
+            clearInterval(constupdate);
+        };
+    };
+    $(document).ready(function() {
+                      $('#buttDown').click(function () {
+                                           $('#start').animate({marginTop:"-=1000px"}, 500)
+                                           $('#options').css("opacity", "1");
+                                           itDown = true;
+                                           });
+                      $('#buttUp').click(function () {
+                                           $('#start').animate({marginTop:"+=1000px"}, 500)
+                                         $('#options').css("opacity", "0");
+                                           itDown = false;
+                                           });
+                      $('#button').click(function () {
+                                         restart();
+                                         });
+                      $(document).keydown(function(key) {
+                                          if(gameactive) {
+                                              switch(parseInt(key.which,10)) {
+                                              case 37:
+                                              p.goLeft(1);
+                                              break;
+                                              case 38:
+                                              p.goUp(1);
+                                              break;
+                                              case 39:
+                                              p.goRight(1);
+                                              break;
+                                              case 40:
+                                              p.goDown(1);
+                                              break;
+                                          }
+                                          e.forEach(function (item) {
+                                                    item.getDirection();
+                                                    });
+                                          p.checkForDEAD();
+                                        }
+                                          else {
+                                          $('#options').css('opacity', '0');
+                                                    restart();
+                                          }
+                                                 });
+                      });
+        </script>
+</html>
