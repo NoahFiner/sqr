@@ -1,0 +1,299 @@
+* {
+    font-family:helvetica;sans-serif;
+    color:black;
+}
+
+a {
+    color:#B2E6FF;
+    text-decoration:none;
+    font-size:30px;
+}
+
+h1 {
+    font-size:200px;
+    color:white;
+    font-family:"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight:lighter;
+    margin: 0px 0px 0px 0px;
+    text-align:center;
+}
+
+#h1s {
+    color:red;
+}
+
+#h1q {
+    color:blue;
+}
+
+#h1r {
+    color:green;
+}
+
+h2 {
+    font-size:70px;
+    color:white;
+    margin: 0px 0px 0px 0px;
+}
+
+h3 {
+    font-size:40px;
+    color:white;
+}
+
+h6 {
+    font-size:20px;
+    color:white;
+    font-family:"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight:lighter;
+    margin: 0px 0px 0px 0px;
+    text-align:center;
+}
+
+#screen {
+    height:99%;
+    width:99%;
+    z-index:-100000000;
+    margin-right:auto;
+    margin-left:auto;
+    position:fixed;
+    background-color:white;
+}
+
+#playable-area {
+    height:80%;
+    width:50%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:5%;
+    z-index:-200;
+    outline:1px solid black;
+}
+
+#vertlines {
+    z-index:-100;
+    height:80%;
+    width:50%;
+    position:absolute;
+    display:inline-block;
+}
+
+#horlines {
+    z-index:-101;
+    height:80%;
+    width:50%;
+    position:absolute;
+    display:inline-block;
+}
+
+.linevert {
+    height:100%;
+    width:1px;
+    background-color:black;
+    display:inline-block;
+}
+
+.linehor {
+    height:1px;
+    width:100%;
+    background-color:black;
+    z-index:-100;
+}
+
+#action-place {
+    height:80%;
+    width:50%;
+    position:absolute;
+    z-index:100;
+}
+
+#player {
+    background-color:blue;
+    position:absolute;
+    display:inline-block;
+}
+
+.controls {
+    height:100px;
+    width:100px;
+    background-color:green;
+    margin-left:10px;
+    margin-right:10px;
+    display:inline-block;
+}
+
+.enemy {
+    background-color:red;
+    position:absolute;
+    display:inline-block;
+}
+
+#dead {
+    opacity:0;
+    color:red;
+}
+
+#start {
+    position:absolute;
+    width:100%;
+    height:2000px;
+    margin-top:-51.5%;
+    margin-left:auto;
+    margin-right:auto;
+    z-index:1000;
+    background-color:rgba(0, 0, 0, 0.8);
+    text-align:center;
+}
+
+.bigpee {
+    font-size:50px;
+    font-weight:lighter;
+    color:white;
+}
+
+#start p {
+    color:white;
+}
+
+#start .smallertext {
+    font-size:30px;
+    font-weight:lighter;
+}
+
+#top-info {
+    position:absolute;
+    width:100%;
+    height:8%;
+    background-color:transparent;
+}
+
+#button {
+    width:300px;
+    height:30px;
+    outline:1px solid white;
+    margin: 20px 0px 0px 0px;
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.special  {
+    color:red;
+}
+
+#background-crap-ignore {
+    height:2000px;
+    position:absolute;
+    
+}
+
+#buttDown {
+    outline: 1px solid white;
+    width:500px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#buttUp {
+    outline: 1px solid white;
+    width:500px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#options {
+    width:100%;
+    height:110%;
+    margin-top:420px;
+    opacity:0;
+}
+
+.option {
+    width:80%;
+    margin-top:50px;
+    margin-bottom:-50px;
+    height:125px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#firstoption {
+    margin-top:75px;
+}
+
+.option p {
+    font-size:30px;
+    font-weight:lighter;
+    float:right;
+    display:inline-block;
+}
+
+#numenemyinfo {
+    font-size:30px;
+    margin-top:-20px;
+}
+
+.hr {
+    margin: 0px auto 0px auto;
+    width:50%;
+    height:1px;
+    background-color:white;
+}
+
+/*yeah I totally didn't get this from online*/
+input[type=range] {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    width: 50%; /* Specific width is required for Firefox. */
+    float:left;
+    display:inline-block;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+    outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type=range]::-ms-track {
+    width: 50%;
+    cursor: pointer;
+    background: transparent; /* Hides the slider so custom styles can be added */
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 1px solid #000000;
+    height: 16px;
+    width: 16px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    margin-top: -14px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
+}
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 1px solid #000000;
+    height: 16px;
+    width: 16px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+}
+
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 1px solid #000000;
+    height: 16px;
+    width: 16px;
+    border-radius: 300px;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+}
