@@ -4,13 +4,22 @@
         <title>sqr</title>
         <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
         <link type="text/css" rel="stylesheet" href="style.css"/>
-        <link rel="shortcut icon" href="logo.ico">
+        <link rel="shortcut icon" href="favicon.ico">
             
     </head>
     <body style="background-color:black">
         <div id="background-crap-ignore">
             </div>
         <div id="screen">
+            <div id="animation1" class="animation">
+                <img src="speed.png"/>
+            </div>
+            <div id="animation2" class="animation">
+                <img src="invince.png"/>
+            </div>
+            <div id="animation3" class="animation">
+                <img src="freeze.png"/>
+            </div>
             <div id="top-info">
             <p id="score">Score: 0</p>
             </div>
@@ -98,10 +107,17 @@
     $('#playable-area').css("width", (playableWidth+9)+"px");
     $('.linevert').css("height", (playableHeight+9)+"px");
     $('.linehor').css("width", (playableWidth+9)+"px");
+    var powwy2 = false;
+    var powwy1 = false;
+    var powwy0 = false;
     var killEverything = function() {
         if(gameactive) {
             gameactive = false;
             var constupdate = setInterval(function () {update()}, 100);
+            ex = new Explosion(p.x, p.y, "red", "yellow", "orange", "black", "black");
+            ex.create();
+            ex.explode();
+            setTimeout(function() {ex.remove(); delete ex}, 1500);
             $('#player').remove();
             $('#prevscore').html("score: "+score);
             if(score > highscore) {
@@ -112,33 +128,155 @@
                 $('#topscore').css("color", "white");
             }
             $('#topscore').html("top: "+highscore);
+            $(window).scroll(0);
             $('#start').animate({marginTop:"+=3000px"}, 500);
         };
+    }
+    var Explosion = function(x, y, c1, c2, c3, c4, c5) {
+        this.colors = [c1, c2, c3, c4, c5];
+        this.ids = [];
+        this.slopes = [];
+        this.create = function() {
+            for(i = 0; i < 70; i++) {
+                this.ids[i] = ('ex'+i);
+                this.slopes[i] = [Math.floor(Math.random()*20) - 10, Math.floor(Math.random()*20 - 10)];
+                $('#playable-area').append("<div class='exp' id='ex"+i+"' style='margin-top:"+(y*pixelHeight + y)+"px;margin-left:"+(x*pixelWidth + x)+"px'></div>");
+                $('#'+this.ids[i]).css("background-color", ""+this.colors[Math.floor(Math.random()*5)]+"");
+            }
+            $('.exp').height(pixelHeight/2);
+            $('.exp').width(pixelHeight/2);
+        }
+        this.explode = function() {
+            for(i = 0; i < 70; i++) {
+                $('#'+this.ids[i]).animate({marginTop:"+="+this.slopes[i][1]*75+"px",marginLeft:"+="+this.slopes[i][0]*75+"px"}, 500)
+                $('#'+this.ids[i]).fadeTo(1000, 0);
+            }
+        }
+        this.remove = function() {
+            $('.exp').fadeTo(100, 0);
+            $('.exp').remove();
+        }
     }
     var Player = function(x, y, id) {
         this.x = x;
         this.y = y;
         this.coords = [this.x, this.y];
+        this.powsors = [0, 0, 0, 0, 0];
         this.checkForDEAD = function() {
             alive = true;
-            for(i = 0; i < e.length; i++) {
-                if(ec[i][0] === this.x) {
-                    if(ec[i][1] === this.y) {
+            if(powwy1 === false) {
+                for(i = 0; i < e.length; i++) {
+                    if(ec[i][0] === this.x && ec[i][1] === this.y) {
                         alive = false;
                         setTimeout(function () {killEverything()}, 50);
+
                     }
                 }
-            }
+            };
             return alive;
         }
+        this.activatePow = function() {
+            var powwy = Math.floor(Math.random()*3)
+            this.powsors[powwy] = 8;
+            var col = [];
+            if(this.powsors[0] === 8) {
+                $('#playercolor').css('background-color', 'green');
+                powwy0 = true;
+                col = ["#33CC33", "#00FF00", "#009900", "black", "black"];
+            };
+            if(this.powsors[1] === 8) {
+                $('#playercolor').css('background-color', 'red');
+                powwy1 = true;
+                col = ["#FF3300", "#FF9933", "#991F00", "black", "black"];
+            }
+            if(this.powsors[2] === 8) {
+                $('#playercolor').css('background-color', 'rgba(114, 255, 244, 0.5)');
+                powwy2 = true;
+                col = ["#66FFFF", "#0099FF", "#000099", "black", "black"];
+            }
+            ex = new Explosion(p.x, p.y, col[0], col[1], col[2], col[3], col[4]);
+            ex.create();
+            ex.explode();
+            setTimeout(function() {ex.remove(); delete ex}, 1500);
+            $('#playercolor').fadeTo(250, 0.8);
+            if(typeof pow != "undefined") {
+                setTimeout(function() {pow.remove()}, 50);
+            };
+            anim = new Animation(powwy);
+            anim.startAnimation();
+        }
+        this.updatepows = function (which) {
+            for(i = 0; i < this.powsors.length; i++) {
+                this.powsors[i] -= 1;
+            }
+            if(this.powsors[which] >= 0) {
+                $('#playercolor').fadeTo(100, (this.powsors[which])/20+0.5);
+                //alert('powsor activated  '+this.powsors);
+            }
+            if(this.powsors[which] < 0) {
+                this.deactivatePow(which);
+            }
+        }
+        this.deactivatePow = function(which) {
+            this.powsors[which] = 0;
+            if(which === 0) {
+                powwy0 = false;
+            }
+            if(which === 1) {
+                powwy1 = false;
+            }
+            if(which === 2) {
+                powwy2 = false;
+            }
+            $('#playercolor').fadeTo(250, 0);
+        }
+        this.checkForPow = function() {
+            if(pow.coords[0] === this.coords[0]) {
+                if(pow.coords[1] === this.coords[1]) {
+                    this.activatePow();
+                }
+            }
+        };
         this.update = function () {
             this.coords = [this.x, this.y];
             score += (1*enemyMultiplier*difficultymultiplier);
+            moves += 1;
             $('#score').html("Score: " + score);
-            this.checkForDEAD();
+            if(powwy1 < 0) {
+                this.checkForDEAD();
+            };
+            if(typeof pow != "undefined") {
+                this.checkForPow();
+            };
+            if(powwy0) {
+                this.updatepows(0);
+            };
+            if(powwy1) {
+                this.updatepows(1);
+            };
+            if(powwy2) {
+                this.updatepows(2);
+            }
+            g.update();
+        }
+        this.getDist = function() {
+            var answer = 1;
+            if(typeof pow != "undefined") {
+                if(this.powsors[0] > 0) {
+                    answer = 2;
+                }
+                else {
+                    answer = 1;
+                }
+            };
+            return answer;
         }
         this.goUp = function(dist) {
-            if(this.coords[1] === 0) {
+            dist = this.getDist();
+            if((this.coords[1] === 0 && dist === 1) || (this.coords[1] === 1 && dist === 2)) {
+                dist -= 1;
+            }
+            if(this.coords[1] === 0 && dist === 2) {
                 dist = 0;
             }
             $(id).animate({marginTop:"-="+((pixelHeight+1)*dist)+"px"}, 100);
@@ -146,7 +284,11 @@
             this.update();
         }
         this.goDown = function(dist) {
-            if(this.coords[1] === 9) {
+            dist = this.getDist();
+            if((this.coords[1] === 9 && dist === 1) || (this.coords[1] === 8 && dist === 2)) {
+                dist -= 1;
+            }
+            if(this.coords[1] === 9 && dist === 2) {
                 dist = 0;
             }
             $(id).animate({marginTop:"+="+(pixelHeight+1)*dist+"px"}, 100);
@@ -154,7 +296,11 @@
             this.update();
         }
         this.goLeft = function(dist) {
-            if(this.coords[0] === 0) {
+            dist = this.getDist();
+            if((this.coords[0] === 0 && dist === 1) || (this.coords[0] === 1 && dist === 2)) {
+                dist -= 1;
+            }
+            if(this.coords[0] === 0 && dist === 2) {
                 dist = 0;
             }
             $(id).animate({marginLeft:"-="+(pixelWidth+1)*dist+"px"}, 100);
@@ -162,7 +308,11 @@
             this.update();
         }
         this.goRight = function(dist) {
-            if(this.coords[0] === 9) {
+            dist = this.getDist();
+            if((this.coords[0] === 9 && dist === 1) || (this.coords[0] === 8 && dist === 2)) {
+                dist -= 1;
+            }
+            if(this.coords[0] === 9 && dist === 2) {
                 dist = 0;
             }
             $(id).animate({marginLeft:"+="+(pixelWidth+1)*dist+"px"}, 100);
@@ -192,14 +342,20 @@
                     if(ec[i][1] === y) {
                         answer = false;
                     }
-                    }
                 }
             }
+        }
             return answer;
         };
         this.goUp = function(dist) {
             //alert('up');
             if(this.coords[1] === 0 || this.isLegal(this.x, (this.y - dist)) === false) {
+                dist = 0;
+            }
+            if((this.coords[1] === 0 && dist === 1) || (this.coords[1] === 1 && dist === 2)) {
+                dist -= 1;
+            }
+            if(this.coords[1] === 0 && dist === 2 || powwy2 === true) {
                 dist = 0;
             }
             $(id).animate({marginTop:"-="+((pixelHeight+1)*dist)+"px"}, 100);
@@ -209,6 +365,12 @@
         this.goDown = function(dist) {
             //alert('down');
             if(this.coords[1] === 9 || this.isLegal(this.x, (this.y + dist)) === false) {
+                dist = 0;
+            }
+            if((this.coords[1] === 9 && dist === 1) || (this.coords[1] === 8 && dist === 2)) {
+                dist -= 1;
+            }
+            if(this.coords[1] === 9 && dist === 2 || powwy2 === true) {
                 dist = 0;
             }
             $(id).animate({marginTop:"+="+(pixelHeight+1)*dist+"px"}, 100);
@@ -221,6 +383,12 @@
                 dist = 0;
                 //alert('done');
             }
+            if((this.coords[0] === 0 && dist === 1) || (this.coords[0] === 1 && dist === 2)) {
+                dist -= 1;
+            }
+            if(this.coords[0] === 0 && dist === 2 || powwy2 === true) {
+                dist = 0;
+            }
             $(id).animate({marginLeft:"-="+(pixelWidth+1)*dist+"px"}, 100);
             this.x -= dist;
             this.update();
@@ -228,6 +396,12 @@
         this.goRight = function(dist) {
             //alert('right');
             if(this.coords[0] === 9 || this.isLegal((this.x + dist), this.y) === false) {
+                dist = 0;
+            }
+            if((this.coords[0] === 9 && dist === 1) || (this.coords[0] === 8 && dist === 2)) {
+                dist -= 1;
+            }
+            if(this.coords[0] === 9 && dist === 2 || powwy2 === true) {
                 dist = 0;
             }
             $(id).animate({marginLeft:"+="+(pixelWidth+1)*dist+"px"}, 100);
@@ -283,21 +457,51 @@
             }
         }
     }
+    var Powerup = function(x, y) {
+        this.x = x;
+        this.y = y;
+        this.coords = [this.x, this.y];
+        //Powerups: [0] = speed, [1] = invincibility, [2] = spook, [3] = freeze, [4] = teleport
+        this.create = function() {
+            $('#action-place').append("<div id='powow' style='margin-top:"+(Math.floor(this.y*pixelHeight + this.y))+"px;margin-left:"+(Math.floor(this.x*pixelWidth + this.x))+"px;opacity:0' class='powies'></div>");
+            $('#powow').css("width", pixelWidth+"px");
+            $('#powow').css("height", pixelHeight+"px");
+            $('#powow').fadeTo(100, 1);
+            this.coords = [this.x, this.y];
+        };
+        this.remove = function() {
+            $('#powow').fadeOut(100);
+            setTimeout(function() {$('#powow').remove();}, 100);
+            this.coords = [];
+            this.x = 0;
+            this.y = 0;
+        };
+    }
+    var alreadyenemies = false;
     var Game = function(startX, startY) {
         this.createChar = function(x, y) {
-            $('#action-place').append("<div id='player' style='margin-top:"+(y*pixelHeight + 5)+"px;margin-left:"+(x*pixelWidth + 5)+"px'></div>")
+            $('#action-place').append("<div id='player' style='margin-top:"+(y*pixelHeight + 5)+"px;margin-left:"+(x*pixelWidth + 5)+"px'><div id='playercolor'></div></div>")
             $('#player').css("width", pixelWidth+"px");
             $('#player').css("height", pixelHeight+"px");
             p = new Player(x, y, "#player");
         };
         this.start = function(enemyid, enemyamt) {
             $('.enemy').remove();
+            if(alreadyenemies) {
+            for(i = 0;i < e.length; i++) {
+                delete e[i];
+            }}
             e = [];
             ec = [];
+            if(typeof pow != "undefined") {
+                pow.remove();
+                delete pow;
+            };
             this.createChar(startX, startY);
             this.createEnemy(enemyid, enemyamt);
         }
-        this.createEnemy = function(id, amt) {
+        this.createEnemy =  function(id, amt) {
+            alreadyenemies = true;
             for(i = 0; i < amt; i++) {
                 x = Math.floor(Math.random()*9);
                 y = Math.floor(Math.random()*9);
@@ -307,12 +511,58 @@
                 e[i] = new Enemy(x, y, "#"+id+""+i, i);
             }
         }
+        this.update = function() {
+            if(moves % 10 === 0) {
+                if(toggledPowerup) {
+                    toggledPowerup = false;
+                    if(typeof pow != "undefined") {
+                        pow.remove();
+                        delete pow;
+                    };
+                    pow = new Powerup(Math.floor(Math.random() * 8), Math.floor(Math.random() * 8));
+                    pow.create();
+                }
+                else {
+                    if(typeof pow != "undefined") {
+                        pow.remove();
+                        delete pow;
+                    }
+                    toggledPowerup = true;
+                }
+            }
+        }
     };
+    var Animation = function(which) {
+        if(which === 0) {
+            $animationId = $('#animation1');
+        }
+        if(which === 1) {
+            $animationId = $('#animation2');
+        }
+        if(which === 2) {
+            $animationId = $('#animation3');
+        }
+        this.endAnimation = function() {
+            animationplaying = false;
+            $animationId.fadeTo(200, 0);
+        }
+        var that = this;
+        this.startAnimation = function() {
+            animationplaying = true;
+            $animationId.fadeTo(200, 1);
+            var penis = setTimeout(function() {that.endAnimation();}, 1000);
+        }
+    }
+    var toggledPowerup = true;
+    var animationplaying = false;
     var g = new Game(5, 5);
     g.start('enemy', beginEnemies);
+    pow = new Powerup(10000, 10000);
+    var undef = typeof g.poop;
     var restart = function() {
         if(gameactive === false) {
             score = 0;
+            moves = 0;
             g.start('enemy', beginEnemies);
             $('#start').animate({marginTop:"-=3000px"}, 500);
             if(itDown) {
@@ -332,37 +582,39 @@
                       $('#buttUp').click(function () {
                                            $('#start').animate({marginTop:"+=1000px"}, 500)
                                          $('#options').css("opacity", "0");
-                                           itDown = false;
+                                         itDown = false;
                                            });
                       $('#button').click(function () {
                                          restart();
                                          });
                       $(document).keydown(function(key) {
-                          $('input').blur()
-                                          if(gameactive) {
-                                              switch(parseInt(key.which,10)) {
-                                              case 37:
-                                              p.goLeft(1);
-                                              break;
-                                              case 38:
-                                              p.goUp(1);
-                                              break;
-                                              case 39:
-                                              p.goRight(1);
-                                              break;
-                                              case 40:
-                                              p.goDown(1);
-                                              break;
-                                          }
-                                          e.forEach(function (item) {
-                                                    item.getDirection();
-                                                    });
-                                          p.checkForDEAD();
-                                        }
-                                          else {
-                                          $('#options').css('opacity', '0');
-                                                    restart();
-                                          }
+                                          $('input').blur();
+                                          if(animationplaying === false) {
+                                              if(gameactive) {
+                                                  switch(parseInt(key.which,10)) {
+                                                  case 37:
+                                                  p.goLeft(1);
+                                                  break;
+                                                  case 38:
+                                                  p.goUp(1);
+                                                  break;
+                                                  case 39:
+                                                  p.goRight(1);
+                                                  break;
+                                                  case 40:
+                                                  p.goDown(1);
+                                                  break;
+                                              }
+                                              e.forEach(function (item) {
+                                                        item.getDirection();
+                                                        });
+                                              p.checkForDEAD();
+                                            }
+                                              else {
+                                              $('#options').css('opacity', '0');
+                                                        restart();
+                                              }
+                                          };
                                                  });
                       });
         </script>
