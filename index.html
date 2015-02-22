@@ -312,10 +312,12 @@
     g.start('enemy', beginEnemies);
     var restart = function() {
         if(gameactive === false) {
+            $('input').blur();
             score = 0;
             g.start('enemy', beginEnemies);
             $('#start').animate({marginTop:"-=3000px"}, 500);
             if(itDown) {
+                itDown = false;
                 $('#start').animate({marginTop:"+=1000px"}, 100);
             }
             gameactive = true;
