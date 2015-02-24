@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>sqr</title>
-        <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type='text/javascript' src="../res/jquery.js"></script>
         <link type="text/css" rel="stylesheet" href="style.css"/>
         <link rel="shortcut icon" href="favicon.ico">
             
@@ -22,6 +22,10 @@
             <div id="animation3" class="animation">
                 <!--<img src="freeze.png"/>-->
                 <p>freeze</p>
+            </div>
+            <div id="animation4" class="animation">
+                <!--<img src="scare.png"/>-->
+                <p>scare</p>
             </div>
             <div id="top-info">
             <p id="score">Score: 0</p>
@@ -110,6 +114,7 @@
     $('#playable-area').css("width", (playableWidth+9)+"px");
     $('.linevert').css("height", (playableHeight+9)+"px");
     $('.linehor').css("width", (playableWidth+9)+"px");
+    var powwy3 = false;
     var powwy2 = false;
     var powwy1 = false;
     var powwy0 = false;
@@ -179,7 +184,7 @@
             return alive;
         }
         this.activatePow = function() {
-            var powwy = Math.floor(Math.random()*3)
+            var powwy = Math.floor(Math.random()*4)
             this.powsors[powwy] = 8;
             var col = [];
             if(this.powsors[0] === 8) {
@@ -196,6 +201,11 @@
                 $('#playercolor').css('background-color', 'rgba(114, 255, 244, 0.5)');
                 powwy2 = true;
                 col = ["#66FFFF", "#0099FF", "#000099", "black", "black"];
+            }
+            if(this.powsors[3] === 8) {
+                $('#playercolor').css('background-color', 'white');
+                powwy3 = true;
+                col = ["gray", "gray", "gray", "black", "black"];
             }
             ex = new Explosion(p.x, p.y, col[0], col[1], col[2], col[3], col[4]);
             ex.create();
@@ -231,7 +241,11 @@
             if(which === 2) {
                 powwy2 = false;
             }
+            if(which === 3) {
+                powwy3 = false;
+            }
             $('#playercolor').fadeTo(250, 0);
+            $('#screen').animate({backgroundColor:"white"}, 250)
         }
         this.checkForPow = function() {
             if(pow.coords[0] === this.coords[0]) {
@@ -241,13 +255,11 @@
             }
         };
         this.update = function () {
+            this.checkForDEAD();
             this.coords = [this.x, this.y];
             score += (1*enemyMultiplier*difficultymultiplier);
             moves += 1;
             $('#score').html("Score: " + score);
-            if(powwy1 < 0) {
-                this.checkForDEAD();
-            };
             if(typeof pow != "undefined") {
                 this.checkForPow();
             };
@@ -260,7 +272,13 @@
             if(powwy2) {
                 this.updatepows(2);
             }
+            if(powwy3) {
+                this.updatepows(3);
+            }
             g.update();
+            e.forEach(function (item) {
+                      item.getDirection();
+            });
         }
         this.getDist = function() {
             var answer = 1;
@@ -338,6 +356,9 @@
             this.dist = [this.x - p.x, this.y - p.y];
         };
         this.isLegal = function(x, y) {
+            if(powwy1 < 0) {
+                p.checkForDEAD();
+            };
             var answer = true;
             for(i = 0; i < e.length; i++) {
                 if(i != num) {
@@ -352,7 +373,10 @@
         };
         this.goUp = function(dist) {
             //alert('up');
-            if(this.coords[1] === 0 || this.isLegal(this.x, (this.y - dist)) === false) {
+            if(powwy3) {
+                dist = -1;
+            }
+            if(this.coords[1] === 0 || this.isLegal(this.x, (this.y - dist)) === false || (this.coords[1] === 9 && dist === -1)) {
                 dist = 0;
             }
             if((this.coords[1] === 0 && dist === 1) || (this.coords[1] === 1 && dist === 2)) {
@@ -367,7 +391,10 @@
         }
         this.goDown = function(dist) {
             //alert('down');
-            if(this.coords[1] === 9 || this.isLegal(this.x, (this.y + dist)) === false) {
+            if(powwy3) {
+                dist = -1;
+            }
+            if(this.coords[1] === 9 || this.isLegal(this.x, (this.y + dist)) === false || (this.coords[1] === 0 && dist === -1)) {
                 dist = 0;
             }
             if((this.coords[1] === 9 && dist === 1) || (this.coords[1] === 8 && dist === 2)) {
@@ -382,7 +409,10 @@
         }
         this.goLeft = function(dist) {
             //alert('left');
-            if(this.coords[0] === 0 || this.isLegal((this.x - dist), this.y) === false) {
+            if(powwy3) {
+                dist = -1;
+            }
+            if(this.coords[0] === 0 || this.isLegal((this.x - dist), this.y) === false || (this.coords[0] === 9 && dist === -1)) {
                 dist = 0;
                 //alert('done');
             }
@@ -398,7 +428,10 @@
         }
         this.goRight = function(dist) {
             //alert('right');
-            if(this.coords[0] === 9 || this.isLegal((this.x + dist), this.y) === false) {
+            if(powwy3) {
+                dist = -1;
+            }
+            if(this.coords[0] === 9 || this.isLegal((this.x + dist), this.y) === false || (this.coords[0] === 0 && dist === -1)) {
                 dist = 0;
             }
             if((this.coords[0] === 9 && dist === 1) || (this.coords[0] === 8 && dist === 2)) {
@@ -493,7 +526,10 @@
             if(alreadyenemies) {
             for(i = 0;i < e.length; i++) {
                 delete e[i];
-            }}
+            }
+            delete e;
+            delete ec;
+            };
             e = [];
             ec = [];
             if(typeof pow != "undefined") {
@@ -515,6 +551,9 @@
             }
         }
         this.update = function() {
+            if(powwy1 < 0) {
+                p.checkForDEAD();
+            };
             if(moves % 10 === 0) {
                 if(toggledPowerup) {
                     toggledPowerup = false;
@@ -544,6 +583,9 @@
         }
         if(which === 2) {
             $animationId = $('#animation3');
+        }
+        if(which === 3) {
+            $animationId = $('#animation4');
         }
         this.endAnimation = function() {
             animationplaying = false;
@@ -607,10 +649,7 @@
                                                   case 40:
                                                   p.goDown(1);
                                                   break;
-                                              }
-                                              e.forEach(function (item) {
-                                                        item.getDirection();
-                                                        });
+                                          };
                                               p.checkForDEAD();
                                             }
                                               else {
@@ -621,7 +660,7 @@
                                                  });
                       });
         </script>
-        <script>
+<script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
