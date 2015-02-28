@@ -11,11 +11,17 @@ a {
 
 h1 {
     font-size:200px;
-    color:white;
+    color:black;
     font-family:"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight:lighter;
     margin: 0px 0px 0px 0px;
     text-align:center;
+}
+
+#score {
+    text-align:center;
+    font-size:150%;
+    font-weight:lighter;
 }
 
 #h1s {
@@ -32,18 +38,27 @@ h1 {
 
 h2 {
     font-size:70px;
-    color:white;
+    color:black;
     margin: 0px 0px 0px 0px;
 }
 
 h3 {
     font-size:40px;
-    color:white;
+    color:black;
 }
 
 h6 {
     font-size:20px;
-    color:white;
+    color:black;
+    font-family:"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight:lighter;
+    margin: 0px 0px 0px 0px;
+    text-align:center;
+}
+
+#button p {
+    font-size:20px;
+    color:black;
     font-family:"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight:lighter;
     margin: 0px 0px 0px 0px;
@@ -67,7 +82,7 @@ h6 {
     margin-right:auto;
     margin-top:5%;
     z-index:-200;
-    outline:1px solid black;
+    outline:1px solid #dbdbdb;
 }
 
 #vertlines {
@@ -89,14 +104,14 @@ h6 {
 .linevert {
     height:100%;
     width:1px;
-    background-color:black;
+    background-color:#f7f7f7;
     display:inline-block;
 }
 
 .linehor {
     height:1px;
     width:100%;
-    background-color:black;
+    background-color:#f7f7f7;
     z-index:-100;
 }
 
@@ -151,18 +166,18 @@ h6 {
     margin-left:auto;
     margin-right:auto;
     z-index:2147483647;
-    background-color:rgba(0, 0, 0, 0.8);
+    background-color:rgba(255, 255, 255, 0.9);
     text-align:center;
 }
 
 .bigpee {
     font-size:50px;
     font-weight:lighter;
-    color:white;
+    color:black;
 }
 
 #start p {
-    color:white;
+    color:black;
 }
 
 #start .smallertext {
@@ -175,12 +190,13 @@ h6 {
     width:100%;
     height:8%;
     background-color:transparent;
+    text-align:center;
 }
 
 #button {
     width:300px;
     height:30px;
-    outline:1px solid white;
+    outline:1px solid black;
     margin: 20px 0px 0px 0px;
     text-align:center;
     margin-left:auto;
@@ -198,14 +214,14 @@ h6 {
 }
 
 #buttDown {
-    outline: 1px solid white;
+    outline: 1px solid black;
     width:500px;
     margin-left:auto;
     margin-right:auto;
 }
 
 #buttUp {
-    outline: 1px solid white;
+    outline: 1px solid black;
     width:500px;
     margin-left:auto;
     margin-right:auto;
@@ -260,29 +276,14 @@ h6 {
 #animation1 {
     background-color:rgba(0, 255, 0, 0.5);
 }
-#animation1 p {
-    color:rgba(0, 255, 0, 1);
-}
 #animation2 {
     background-color:rgba(255, 0, 0, 0.5);
 }
-#animation2 p {
-    color:rgba(255, 0, 0, 1);
-}
-
 #animation3 {
     background-color:rgba(114, 255, 244, 0.5);
 }
-#animation3 p {
-    color:rgba(114, 255, 244, 1);
-}
-
 #animation4 {
     background-color:rgba(100, 100, 100, 0.5);
-}
-
-#animation4 p {
-    color:white;
 }
 
 .animation {
@@ -301,15 +302,6 @@ h6 {
     display:block;
 }
 
-.animation p {
-    font-size:200px;
-    margin-left:auto;
-    margin-right:auto;
-    text-align:center;
-    font-weight:lighter;
-    display:block;
-}
-
 #top-info p {
     display:inline-block;
 }
@@ -320,6 +312,33 @@ h6 {
     position:absolute;
     z-index:10;
     background-color:black;
+}
+
+.halfoption {
+    width:30%;
+    height:90%;
+    background-color:transparent;
+    display:inline-block;
+}
+
+#optionleft {
+    float:left;
+    display:inline-block;
+}
+
+#optionmiddle {
+    display:inline-block;
+}
+
+#optionright {
+    opacity:0.25;
+}
+
+.halfoption img {
+    height:90%;
+    margin-left:auto;
+    margin-right:auto;
+    display:inline-block;
 }
 
 /*yeah I totally didn't get this from online*/
@@ -341,7 +360,7 @@ input[type=range]:focus {
 input[type=range]::-ms-track {
     width: 50%;
     cursor: pointer;
-    background: transparent; /* Hides the slider so custom styles can be added */
+    background: #000; /* Hides the slider so custom styles can be added */
     border-color: transparent;
     color: transparent;
 }
@@ -378,4 +397,56 @@ input[type=range]::-ms-thumb {
     border-radius: 300px;
     background: rgba(255, 255, 255, 0.4);
     cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    background: #FFF;
+    border-radius: 1.3px;
+    border: 0.2px solid #010101;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #FFF;
+}
+
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    background: #FFF;
+    border-radius: 1.3px;
+    border: 0.2px solid #010101;
+}
+
+input[type=range]::-ms-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    background: #FFF;
+    border-color: transparent;
+    border-width: 16px 0;
+    color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+    background: #FFF;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]:focus::-ms-fill-lower {
+    background: #FFF;
+}
+input[type=range]::-ms-fill-upper {
+    background: #FFF;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]:focus::-ms-fill-upper {
+    background: #FFF;
 }
