@@ -118,10 +118,10 @@
         }
     };
     var deanimateScore = function() {
-        $('#score').animate({fontSize:"-=5px",marginTop:"+=2.5px",color:"black"}, 60);
+        $('#score').animate({fontSize:"-=5px",marginTop:"+=2.5px"}, 60);
     }
     var animateScore = function() {
-        $('#score').animate({fontSize:"+=5px",marginTop:"-=2.5px",color:"red"}, 10);
+        $('#score').animate({fontSize:"+=5px",marginTop:"-=2.5px"}, 10);
         setTimeout(function() {deanimateScore()}, 10);
     }
     drawLines();
