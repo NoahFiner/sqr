@@ -1,82 +1,83 @@
 <!DOCTYPE html>
 <html>
     <head>
-    <!--COPYWRITE Noah Finer on 2/15/15
-    Original idea and code by Noah (with feedback from a lot of people)
-    The name sqr™ is trademarked (not really)
-    To sign up for the emailing list, email noahfiner@gmail.com
-    Don't copy this thing or else I will find you... and I will kill you... Unless you're Saketram.
-    ha i won't do that but still don't copy it you fartnuggets
-    -->
         <title>sqr</title>
         <script type='text/javascript' src="jquery.js"></script>
         <link type="text/css" rel="stylesheet" href="style.css"/>
         <link rel="shortcut icon" href="favicon.ico">
-            
-    </head>
+            <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+            </head>
     <body style="background-color:black">
         <div id="background-crap-ignore">
-            </div>
+        </div>
         <div id="screen">
             <div id="animation1" class="animation">
-                <!--<p>speed</p>-->
                 <img src="speed.png"/>
             </div>
             <div id="animation2" class="animation">
-                <!--<p>invincibility</p>-->
                 <img src="invince.png"/>
             </div>
             <div id="animation3" class="animation">
                 <img src="freeze.png"/>
-                <!--<p>freeze</p>-->
             </div>
             <div id="animation4" class="animation">
                 <img src="scare.png"/>
-                <!--<p>scare</p>-->
             </div>
             <div id="top-info">
-            <p id="score">Score: 0</p>
+                <p id="score">score: 0</p>
+                <!--<p id="chances">Chance2 = 0, Chance0 = 0</p>-->
             </div>
             <div id="playable-area">
                 <div id="vertlines">
-                    </div>
-                <div id="horlines">
-                    </div>
-                <div id="action-place">
-                    </div>
                 </div>
+                <div id="horlines">
+                </div>
+                <div id="action-place">
+                </div>
+            </div>
             <div id="start">
                 <h1><span id="h1s">s</span><span id="h1q">q</span><span id="h1r">r</span></h1>
                 <h6>a game developed by noah finer</h6>
                 <p id="prevscore" class="bigpee">score: 0</p>
                 <p id="topscore" class="bigpee">top: 0</p>
-                <div id="button">
-                <h6>press any key to play</h6>
+                <div id="button" class="button">
+                    <p>press any key to play</p>
                 </div>
-                <div id="buttDown">
-                    <p style="margin-top:50px;color:white" class="smallertext">click for options</p>
+                <div id="buttDown" class="button">
+                    <p style="margin-top:50px;color:black" class="smallertext">click for options</p>
                 </div>
                 <div id="options">
                     <h2>options</h2>
-                    <div id="buttUp">
+                    <div id="buttUp" class="button">
                         <p class="smallertext">click to go back</p>
                     </div>
                     <div class="option" id="firstoption">
                         <form>
                             <input type="range" min="2" max="25" value="3" name="numenemies"/>
-                            </form>
+                        </form>
                         <p id="numenemyinfo">amount of enemies: 3<br>multiplier: 3x</p>
-                        </div>
+                    </div>
                     <div class="hr"></div>
                     <div class="option">
                         <form>
                             <input type="range" min="0" max="2" name="difficulty"/>
-                            </form>
+                        </form>
                         <p id="difficultyinfo">difficulty: easy</p>
+                    </div>
+                    <div class="option">
+                        <div class="halfoption" id="optionleft">
+                            <img id="gm0" class="gms" src="classic.png"/>
+                        </div>
+                        <div class="halfoption" id="optionmiddle">
+                            <img id="gm1" class="gms" src="increasing.png"/>
+                        </div>
+                        <div class="halfoption" id="optionright">
+                            <img id="gm2" class="gms" src="intervals.png"/>
+                        </div>
                     </div>
                 </div>
             </div>
-    </body>
+            </body>
     <script>
         var update = function() {
             $('input').blur();
@@ -90,7 +91,7 @@
             enemyMultiplier = Math.floor((beginEnemies)/3) + 1
             $('#numenemyinfo').html("amount of enemies: "+beginEnemies+"<br>multiplier: "+enemyMultiplier+"x");
             difficulty = parseInt($('input[name=difficulty').val());
-            difficultymultiplier = ((difficulty + 1)/4)*2;
+            difficultymultiplier = Math.pow(2, difficulty)/2
             switch(difficulty) {
                 case 0:
                 $('#difficultyinfo').html("difficulty: easy<br>multiplier: "+difficultymultiplier+"x");
@@ -104,16 +105,26 @@
                 default:
                 ayy = "lmao";
             };
-            }
+        }
     update();
     var constupdate = setInterval(function () {update()}, 50);
-        var itDown = false;
+    var itDown = false;
+    var drawLines = function() {
         for(i = 0;i < 9;i++) {
             $('#vertlines').append("<div class='linevert' style='margin-left:"+((playableWidth/10))+"px'></div>");
         }
         for(i = 0;i < 9;i++) {
             $('#horlines').append("<div class='linehor' style='margin-top:"+((playableHeight/10))+"px'></div>");
         }
+    };
+    var deanimateScore = function() {
+        $('#score').animate({fontSize:"-=5px",marginTop:"+=2.5px",backgorundColor:"black"}, 60);
+    }
+    var animateScore = function() {
+        $('#score').animate({fontSize:"+=5px",marginTop:"-=2.5px",backgroundColor:"green"}, 10);
+        setTimeout(function() {deanimateScore()}, 10);
+    }
+    drawLines();
     var gameactive = false;
     var score = 0;
     var prevscore = 0;
@@ -141,11 +152,12 @@
                 $('#topscore').css("color", "red");
             }
             else {
-                $('#topscore').css("color", "white");
+                $('#topscore').css("color", "black");
             }
             $('#topscore').html("top: "+highscore);
             $(window).scroll(0);
             $('#start').animate({marginTop:"+=3000px"}, 500);
+            setTimeout(function () {$('#playable-area').css('-webkit-filter', 'blur(5px)')}, 450);
         };
     }
     var Explosion = function(x, y, c1, c2, c3, c4, c5) {
@@ -185,7 +197,7 @@
                     if(ec[i][0] === this.x && ec[i][1] === this.y) {
                         alive = false;
                         setTimeout(function () {killEverything()}, 50);
-
+                        
                     }
                 }
             };
@@ -267,7 +279,8 @@
             this.coords = [this.x, this.y];
             score += (1*enemyMultiplier*difficultymultiplier);
             moves += 1;
-            $('#score').html("Score: " + score);
+            $('#score').html("score: " + score);
+            animateScore();
             if(typeof pow != "undefined") {
                 this.checkForPow();
             };
@@ -286,7 +299,7 @@
             g.update();
             e.forEach(function (item) {
                       item.getDirection();
-            });
+                      });
         }
         this.getDist = function() {
             var answer = 1;
@@ -370,13 +383,13 @@
             var answer = true;
             for(i = 0; i < e.length; i++) {
                 if(i != num) {
-                if(ec[i][0] === x) {
-                    if(ec[i][1] === y) {
-                        answer = false;
+                    if(ec[i][0] === x) {
+                        if(ec[i][1] === y) {
+                            answer = false;
+                        }
                     }
                 }
             }
-        }
             return answer;
         };
         this.goUp = function(dist) {
@@ -455,24 +468,56 @@
         this.getDirection = function() {
             randomthing = Math.floor(Math.random()*1000) % 2;
             randomai = Math.random();
-            if(difficulty === 2) {
-                randomthing += 1;
-                if(Math.random() < 0.2) {
+            if(g.gm[0]) {
+                if(difficulty === 2) {
+                    randomthing += 1;
+                    if(Math.random() < 0.2) {
+                        randomthing = 1;
+                    }
+                }
+                if(difficulty === 1){
                     randomthing = 1;
+                    if(Math.random() < 0.0001) {
+                        randomthing = 2;
+                    }
+                    if(Math.random() < 0.035) {
+                        randomthing = 0;
+                    }
                 }
-            }
-            if(difficulty === 1){
-                randomthing = 1;
-                if(Math.random() < 0.0001) {
-                    randomthing = 2;
+                if(difficulty === 0) {
+                    if(Math.random() > 0.2) {
+                        randomthing = 1;
+                    }
                 }
-                if(Math.random() < 0.035) {
-                    randomthing = 0;
-                }
-            }
-            if(difficulty === 0) {
-                if(Math.random() > 0.2) {
+            };
+            if(g.gm[1]) {
+                var x = score;
+                if(difficulty === 2) {
                     randomthing = 1;
+                    if(Math.random() < Math.pow(2, (x/1000)) - 1) {
+                        randomthing = 2;
+                    }
+                    if(Math.random() < (Math.pow(2, (-x/250))) - 0.8) {
+                        randomthing = 0;
+                    }
+                }
+                if(difficulty === 1) {
+                    randomthing = 1;
+                    if(Math.random() < Math.pow(2, (x/5000)) - 1) {
+                        randomthing = 2;
+                    }
+                    if(Math.random() < (Math.pow(2, (-x/500))) - 0.7) {
+                        randomthing = 0;
+                    }
+                }
+                if(difficulty === 0) {
+                    randomthing = 1;
+                    if(Math.random() < Math.pow(2, (x/10000)) - 1) {
+                        randomthing = 2;
+                    }
+                    if(Math.random() < (Math.pow(2, (-x/500))) - 0.55) {
+                        randomthing = 0;
+                    }
                 }
             }
             if(this.diff[0] > this.diff[1]) {
@@ -523,6 +568,12 @@
     }
     var alreadyenemies = false;
     var Game = function(startX, startY) {
+        this.gm = [false, false];
+        this.selectGm = function(which) {
+            this.gm = [false, false];
+            this.gm[which] = true;
+        }
+        this.selectGm(0);
         this.createChar = function(x, y) {
             $('#action-place').append("<div id='player' style='margin-top:"+(y*pixelHeight + 5)+"px;margin-left:"+(x*pixelWidth + 5)+"px'><div id='playercolor'></div></div>")
             $('#player').css("width", pixelWidth+"px");
@@ -532,11 +583,11 @@
         this.start = function(enemyid, enemyamt) {
             $('.enemy').remove();
             if(alreadyenemies) {
-            for(i = 0;i < e.length; i++) {
-                delete e[i];
-            }
-            delete e;
-            delete ec;
+                for(i = 0;i < e.length; i++) {
+                    delete e[i];
+                }
+                delete e;
+                delete ec;
             };
             e = [];
             ec = [];
@@ -552,6 +603,10 @@
             for(i = 0; i < amt; i++) {
                 x = Math.floor(Math.random()*9);
                 y = Math.floor(Math.random()*9);
+                if(x === p.x && y === p.y) {
+                    x = 3;
+                    y = 9;
+                }
                 $('#action-place').append("<div id="+id+""+i+" class='enemy' style='margin-top:"+(y*pixelHeight + y)+"px;margin-left:"+(x*pixelWidth + x)+"px'></div>")
                 $('#'+id+i).css("width", pixelWidth+"px");
                 $('#'+id+i).css("height", pixelHeight+"px");
@@ -610,6 +665,9 @@
     var animationplaying = false;
     var g = new Game(5, 5);
     g.start('enemy', beginEnemies);
+    $('.gms').css('outline', 'black 0px solid');
+    $('#gm0').css('outline', 'black 1px solid');
+    g.selectGm(0);
     pow = new Powerup(10000, 10000);
     var undef = typeof g.poop;
     var restart = function() {
@@ -618,6 +676,7 @@
             moves = 0;
             g.start('enemy', beginEnemies);
             $('#start').animate({marginTop:"-=3000px"}, 500);
+            $('#playable-area').css('-webkit-filter', 'blur(0px)');
             if(itDown) {
                 $('#start').animate({marginTop:"+=1000px"}, 100);
                 itDown = false;
@@ -627,55 +686,68 @@
         };
     };
     $(document).ready(function() {
+                      $('.button').hover(function () {
+                                         $('.button').animate({backgroundColor:"#000000"}, 100);
+                                         }, function() {
+                                         $(this).animate({backgroundColor:"transparent"}, 100);
+                                         });
                       $('#buttDown').click(function () {
                                            $('#start').animate({marginTop:"-=1000px"}, 500)
                                            $('#options').css("opacity", "1");
                                            itDown = true;
                                            });
                       $('#buttUp').click(function () {
-                                           $('#start').animate({marginTop:"+=1000px"}, 500)
+                                         $('#start').animate({marginTop:"+=1000px"}, 500)
                                          $('#options').css("opacity", "0");
                                          itDown = false;
-                                           });
+                                         });
                       $('#button').click(function () {
                                          restart();
                                          });
+                      $('#optionmiddle').click(function() {
+                                               $('.gms').css('outline', 'white 0px solid');
+                                               $('#gm1').css('outline', 'black 1px solid');
+                                               g.selectGm(1);
+                                               });
+                      $('#optionleft').click(function() {
+                                             $('.gms').css('outline', 'white 0px solid');
+                                             $('#gm0').css('outline', 'black 1px solid');
+                                             g.selectGm(0);
+                                             });
+                      $('#optionright').click(function() {
+                                              alert("NOT AVAILABLE YET! Check back next Friday!");
+                                              });
+                      $(window).resize(function() {
+                                       drawLines();
+                                       });
                       $(document).keydown(function(key) {
                                           $('input').blur();
                                           if(animationplaying === false) {
-                                              if(gameactive) {
-                                                  switch(parseInt(key.which,10)) {
-                                                  case 37:
-                                                  p.goLeft(1);
-                                                  break;
-                                                  case 38:
-                                                  p.goUp(1);
-                                                  break;
-                                                  case 39:
-                                                  p.goRight(1);
-                                                  break;
-                                                  case 40:
-                                                  p.goDown(1);
-                                                  break;
+                                          if(gameactive) {
+                                          switch(parseInt(key.which,10)) {
+                                          case 37:
+                                          p.goLeft(1);
+                                          break;
+                                          case 38:
+                                          p.goUp(1);
+                                          break;
+                                          case 39:
+                                          p.goRight(1);
+                                          break;
+                                          case 40:
+                                          p.goDown(1);
+                                          break;
                                           };
-                                              p.checkForDEAD();
-                                            }
-                                              else {
-                                              $('#options').css('opacity', '0');
-                                                        restart();
-                                              }
+                                          p.checkForDEAD();
+                                          }
+                                          else {
+                                          if(parseInt(key.which,10) != 91 || 13 || 16 || 51 || 52 || 17) {
+                                          setTimeout(function() {$('#options').css('opacity', '0');
+                                                     restart();}, 500);
+                                          }
                                           };
-                                                 });
+                                          };
+                                          });
                       });
         </script>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-59921773-1', 'auto');
-  ga('send', 'pageview');
-
-</script>
 </html>
